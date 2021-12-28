@@ -8,13 +8,13 @@ KalmanGain = np.array([[0.1, 0  ],
 #config
 XSysVariance = 1
 VSysVariance = 1
-SensXVariance = 200
-SensVVariance = 5
+XSensVariance = 200
+VSensVariance = 5
 timecount = 100
 dt = 0.1
 
 input_value = [0.5]*int(timecount/dt)                   # システムへの入力u(t) 今回は等加速度運動とした
-true_position = [np.array([0,0])]*int(timecount/dt)     # システムの真の状態 [x^true, v^true] 以下，状態は[x,v]の形
+true_position = [np.array([0,0])]*int(timecount/dt)     # システムの真の状態 [x^true, v^true] 以下，各状態は[x,v]の形
 estimate_position = [np.array([0,0])]*int(timecount/dt) # カルマンフィルタによって推定されるシステムの状態
 odometory = [np.array([0,0])]*int(timecount/dt)         # システムの入力から推定されるシステムの状態
 observation = [np.array([0,0])]*int(timecount/dt)       # センサーの値から(観測，推定される)システムの状態
@@ -24,7 +24,7 @@ for t in range(int(timecount/dt)):
     if t == 0:
         true_position[t] = initial_state
         continue
-    true_position[t] = np.array([[1,dt],[0,1]])@true_position[t-1]\
+    true_position[t] = np.array([[1,dt],[0,1]])@true_position[t-1] \
                        + np.array([0.5*dt*dt,dt])*input_value[t] \
                        + np.array([np.random.normal(0,XSysVariance),np.random.normal(0,VSysVariance)])
 
@@ -33,9 +33,9 @@ for t in range(int(timecount/dt)):
     if t == 0:
         estimate_position[0] = initial_state
         continue
-    odometory[t] = np.array([[1,dt],[0,1]])@estimate_position[t-1]\
+    odometory[t] = np.array([[1,dt],[0,1]])@estimate_position[t-1] \
                    + np.array([0.5*dt*dt,dt])*input_value[t]
-    observation[t] = np.array([true_position[t][0]+np.random.normal(0,SensXVariance), true_position[t][1]+np.random.normal(0,SensVVariance)])
+    observation[t] = np.array([true_position[t][0]+np.random.normal(0,XSensVariance), true_position[t][1]+np.random.normal(0,VSensVariance)])
     estimate_position[t] = (np.eye(2) - KalmanGain)@odometory[t] + KalmanGain@observation[t]
 
 fig = plt.figure()
