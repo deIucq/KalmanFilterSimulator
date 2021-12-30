@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # config
-XSysVariance = 1
-VSysVariance = 1
+XSysVariance = 5
+VSysVariance = 2
 XSensVariance = 500
-VSensVariance = 10
+VSensVariance = 50
 timecount = 100
 dt = 0.1
 
@@ -41,8 +41,8 @@ for t in range(int(timecount/dt)):
                        + np.array([0.5*dt*dt,dt])*input_value[t] \
                        + np.array([np.random.normal(0,XSysVariance),np.random.normal(0,VSysVariance)])
     observation[t] = true_position[t] + np.array([np.random.normal(0,XSensVariance), np.random.normal(0,VSensVariance)])
-ax_x.plot(np.arange(0, timecount, dt), [i[0] for i in true_position], label='true_position', zorder=2)
-ax_v.plot(np.arange(0, timecount, dt), [i[1] for i in true_position], label='true_position', zorder=2)
+ax_x.plot(np.arange(0, timecount, dt), [i[0] for i in true_position], label='true position', zorder=2)
+ax_v.plot(np.arange(0, timecount, dt), [i[1] for i in true_position], label='true position', zorder=2)
 
 # Kalman Filter
 for t in range(int(timecount/dt)):
@@ -54,8 +54,8 @@ for t in range(int(timecount/dt)):
     estimate_position[t] = (np.eye(2) - optimized_kalmangain[t])@odometory[t] + optimized_kalmangain[t]@observation[t]
 ax_x.plot(np.arange(0, timecount, dt), [i[0] for i in observation], label='observation', zorder=1)
 ax_v.plot(np.arange(0, timecount, dt), [i[1] for i in observation], label='observation', zorder=1)
-ax_x.plot(np.arange(0, timecount, dt), [i[0] for i in estimate_position], label='estimate_position')
-ax_v.plot(np.arange(0, timecount, dt), [i[1] for i in estimate_position], label='estimate_position')
+ax_x.plot(np.arange(0, timecount, dt), [i[0] for i in estimate_position], label='estimated position')
+ax_v.plot(np.arange(0, timecount, dt), [i[1] for i in estimate_position], label='estimated position')
 
 # Kalman Filter with KalmanGain optimized in advance.
 for t in range(int(timecount/dt)):
